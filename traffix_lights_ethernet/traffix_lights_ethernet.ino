@@ -22,8 +22,8 @@ const char okHeader[] PROGMEM =
 static void print_webpage(BufferFiller& buf)
 {
   buf.emit_p(PSTR("$F\n\n"
-    "<html><head><title>LIGHTS</title></head><body>"
-    "<center><h1>Zagrava LIGHTS</h1>"
+    "<html><head><title>Trafix lights</title></head><body>"
+    "<center><h1>Trafix lights</h1>"
     "<hr><h2><a href=\"/red\">RED</a>"
     "<br><a href=\"/yellow\">YELLOW</a>"
     "<br><a href=\"/green\">GREEN</a>"
@@ -55,10 +55,10 @@ void setup(){
   Serial.println("Boot");
 #endif
   
-  /*
+  
   ether.begin(sizeof Ethernet::buffer, mymac, SS);
   ether.staticSetup(myip, gwip);
-*/
+/*
 
 // Change 'SS' to your Slave Select pin, if you arn't using the default pin
   if (ether.begin(sizeof Ethernet::buffer, mymac, SS) == 0){
@@ -76,7 +76,7 @@ void setup(){
   ether.printIp("My IP: ", ether.myip);
   ether.printIp("GW IP: ", ether.gwip);
   ether.printIp("DNS IP: ", ether.dnsip);
-  
+  */
   #if SERIAL
     Serial.println("Init");
   #endif
