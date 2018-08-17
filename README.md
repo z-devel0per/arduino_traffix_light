@@ -1,4 +1,4 @@
-Arduino Traffic Light with ENC28J60 ethernet
+Arduino Traffic Light with ENC28J60 ethernet web control
 ===================================
 
 ## Libraries
