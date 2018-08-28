@@ -3,10 +3,10 @@
 #undef SERIAL
 #define SERIAL 1
 
-static byte myip[] = { 192,168,1,206 };
+static byte myip[] = { 192,168,1,180 };
 static byte gwip[] = { 192,168,1,1 };
 static byte ssdp[] = { 239,255,255,250 };
-static byte mymac[] = { 0x74,0x69,0x69,0x2D,0x30,0x31 };
+static byte mymac[] = { 0x74,0x69,0x69,0x2D,0x30,0x32 };
 byte Ethernet::buffer[750]; // tcp ip send and receive buffer
 unsigned long timer=9999;
 
@@ -22,12 +22,13 @@ const char okHeader[] PROGMEM =
 static void print_webpage(BufferFiller& buf)
 {
   buf.emit_p(PSTR("$F\n\n"
-    "<html><head><title>Trafix lights</title></head><body>"
-    "<center><h1>Trafix lights</h1>"
-    "<hr><h2><a href=\"/red\">RED</a>"
-    "<br><a href=\"/yellow\">YELLOW</a>"
-    "<br><a href=\"/green\">GREEN</a>"
-    "<br></h2>"
+    "<html><head><title>Stoplight</title></head><body>"
+    "<center><h1>Stoplight</h1>"
+    "<hr><h1><a href=\"/red\" style=\"color:red\">&#9673; red</a>"
+    "<br><a href=\"/yellow\" style=\"color:yellow\">&#9673; yellow</a>"
+    "<br><a href=\"/green\" style=\"color:green\">&#9673; green</a>"
+    "<br><br>All <a href=\"/off\">&#9678; off</a>, &nbsp <a href=\"/on\">&#9673; on</a>" 
+    "<br></h1>"
     "</center><hr>"
     "</body></html>"
   ), okHeader);
@@ -47,6 +48,16 @@ void ToggleLight(short pinNum){
    }
 }
 
+void AllLight(short state){
+  #if SERIAL
+   Serial.print("AllLight ");
+   Serial.println(state);
+#endif
+   for(short i=0; i<3; ++i){  
+    digitalWrite(pins[i], state);  
+   }
+}
+
 
 
 void setup(){  
@@ -55,10 +66,10 @@ void setup(){
   Serial.println("Boot");
 #endif
   
-  
+  /*
   ether.begin(sizeof Ethernet::buffer, mymac, SS);
   ether.staticSetup(myip, gwip);
-/*
+*/
 
 // Change 'SS' to your Slave Select pin, if you arn't using the default pin
   if (ether.begin(sizeof Ethernet::buffer, mymac, SS) == 0){
@@ -76,7 +87,7 @@ void setup(){
   ether.printIp("My IP: ", ether.myip);
   ether.printIp("GW IP: ", ether.gwip);
   ether.printIp("DNS IP: ", ether.dnsip);
-  */
+  
   #if SERIAL
     Serial.println("Init");
   #endif
@@ -97,7 +108,7 @@ void loop()
     char* data = (char *) Ethernet::buffer + pos;
     bfill = ether.tcpOffset();
     #if SERIAL
-      Serial.println(data);
+      //Serial.println(data);
     #endif
 
 
@@ -125,6 +136,16 @@ void loop()
       print_webpage(bfill);
       ToggleLight(1);
       
+    }else
+    if (strncmp("GET /off", data, 8) == 0) {  
+      print_webpage(bfill);
+      AllLight(LOW);
+      
+    }else
+    if (strncmp("GET /on", data, 7) == 0) {  
+      print_webpage(bfill);
+      AllLight(HIGH);
+      
     }
     else{
       bfill.emit_p(PSTR("HTTP/1.0 401 Unauthorized\r\nContent-Type: text/html\r\n\r\n<h1>401 Unauthorized</h1>"));
@@ -134,5 +155,15 @@ void loop()
   }
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
